@@ -1,20 +1,17 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
+/* This one goes for the palette */
 .hbox
 {
 	-fx-padding: 1;
 	-fx-spacing: 1;
-	-fx-alignment:top-right;
+	-fx-alignment:top-left;
+	-fx-background-image:url("file:Colorbackground.png");
+	-fx-background-repeat:space space;
 }
-
+/* palette debug */
 .palettestyle
 {
 	-fx-grid-lines-visible:true;
-	
 }
 
-.schcolorstyle
-{
-	-fx-border-color:black;
-	-fx-border-radius:1px;
-}

@@ -1,6 +1,8 @@
 package userInterface;
 
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class SCHColor extends Rectangle
@@ -36,10 +38,8 @@ public class SCHColor extends Rectangle
 	/// This function is called in the constructor
 	public void setUp(Color ColorToSet)
 	{
-		this.setHeight(15);
-		this.setWidth(15);
-		
-		// TODO make a background image on which it can set opacity
+		this.setHeight(20);
+		this.setWidth(20);
 		
 		this.setFill(ColorToSet);
 		this.setVisible(true);

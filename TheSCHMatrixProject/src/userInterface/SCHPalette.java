@@ -29,17 +29,16 @@ public class SCHPalette
 	public void Init()
 	{
 		palette = new GridPane();
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
-		palette.getColumnConstraints().add((new ColumnConstraints(16)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(21)));
 		palette.setHgap(1);
 		palette.setVgap(1);
 		palette.setPrefSize(200, 100);
-		palette.relocate(650, 20);
 		palette.getStylesheets().add(getClass().getResource("schpalette.css").toExternalForm());
 		// DEBUG purposes
 		palette.getStyleClass().add("palettestyle");

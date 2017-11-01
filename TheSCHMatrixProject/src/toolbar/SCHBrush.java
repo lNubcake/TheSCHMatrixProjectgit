@@ -16,7 +16,6 @@ public class SCHBrush extends Button
 		super();
 		this.setVisible(true);
 		this.setPrefSize(30, 30);
-		this.relocate(300, 200);
 		// TODO photoshop this image
 		this.setBackground(new Background(new BackgroundImage(new Image("file:Brush.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT,new BackgroundSize(30,30,false,false,true,false))));
 	}
