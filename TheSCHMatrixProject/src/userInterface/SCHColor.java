@@ -1,9 +1,12 @@
 package userInterface;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import tools.SCHTool;
 
 public class SCHColor extends Rectangle
 {	
@@ -45,7 +48,21 @@ public class SCHColor extends Rectangle
 		this.setVisible(true);
 		this.setStroke(Color.BLACK);
 		this.setStrokeWidth(1);
+		
+		this.setOnMouseClicked(new onClickEventHandler());
 	}
 	
-	// TODO override onMousePressed
+	public Color SCHgetColor()
+	{
+		return (Color) this.getFill();
+	}
+	
+	class onClickEventHandler implements EventHandler
+	{
+		@Override
+		public void handle(Event event)
+		{
+			SCHTool.theColor = SCHgetColor();
+		}
+	}
 }

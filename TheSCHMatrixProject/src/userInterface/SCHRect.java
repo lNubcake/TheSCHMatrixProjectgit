@@ -2,6 +2,7 @@ package userInterface;
 
 import java.util.ArrayList;
 
+import application.primaryScreenBounds;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -23,11 +24,11 @@ public class SCHRect
 		thePoints.add(new SCHPoint(Color.BEIGE));	
 		
 		theRect = new GridPane();
-		theRect.setMaxSize(20, 20);
-		theRect.getColumnConstraints().add(new ColumnConstraints(5));
-		theRect.getColumnConstraints().add(new ColumnConstraints(5));
-		theRect.getRowConstraints().add(new RowConstraints(5));
-		theRect.getRowConstraints().add(new RowConstraints(5));
+		theRect.setMaxSize((primaryScreenBounds.Bounds.getWidth()/1920) * 40, (primaryScreenBounds.Bounds.getHeight()/1040) * 40);
+		theRect.getColumnConstraints().add(new ColumnConstraints((primaryScreenBounds.Bounds.getWidth()/1920) *10));
+		theRect.getColumnConstraints().add(new ColumnConstraints((primaryScreenBounds.Bounds.getWidth()/1920) *10));
+		theRect.getRowConstraints().add(new RowConstraints((primaryScreenBounds.Bounds.getHeight()/1040) *10));
+		theRect.getRowConstraints().add(new RowConstraints((primaryScreenBounds.Bounds.getHeight()/1040) *10));
 		theRect.setConstraints(thePoints.get(0),0,0);
 		theRect.getChildren().add(thePoints.get(0));
 		theRect.setConstraints(thePoints.get(1),1,0);
@@ -36,7 +37,5 @@ public class SCHRect
 		theRect.getChildren().add(thePoints.get(2));
 		theRect.setConstraints(thePoints.get(3),1,1);
 		theRect.getChildren().add(thePoints.get(3));
-		
-		theRect.relocate(200,300);
 	}
 }

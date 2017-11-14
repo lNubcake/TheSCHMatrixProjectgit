@@ -5,6 +5,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import toolbar.SCHBrush;
+import tools.SCHBrushTool;
+import tools.SCHTool;
 import userInterface.SCHBuilding;
 import userInterface.SCHPalette;
 import userInterface.SCHRect;
@@ -25,6 +27,7 @@ public class Main extends Application {
 	static SCHPalette palette;
 	static SCHBrush brush;
 	static SCHBuilding building;
+	static SCHTool currentTool;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -41,6 +44,8 @@ public class Main extends Application {
 		// And this is the place where the playground ends
 		
 		try {
+			
+			currentTool = new SCHBrushTool();
 			
 			initRoot();
 			initScene(primaryStage);

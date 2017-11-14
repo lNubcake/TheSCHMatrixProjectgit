@@ -24,6 +24,8 @@ public class SCHBuilding
 		
 		theBuilding.setBackground(new Background(new BackgroundImage(new Image("file:Building.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(700,880,false,false,true,false))));
 		theBuilding.getStylesheets().add(getClass().getResource("schpalette.css").toExternalForm());
+		
+		theBuilding.add((new SCHFrame()).theFrame, 0, 0);
 	}
 	
 }
