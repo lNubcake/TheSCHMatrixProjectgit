@@ -17,6 +17,7 @@ public class SCHPoint extends Button
 {
 	public Color myColor = Color.BLACK;
 
+	/// This constructor creates an SCHPoint witch a specific color
 	public SCHPoint(Color ColorToSet)
 	{
 		super();
@@ -32,11 +33,13 @@ public class SCHPoint extends Button
 		this.setOnMouseClicked(new onClickEventHandler());
 	}
 	
+	/// This function sets the background value of the point
 	public void setMyBackground(Color ColorToSet)
 	{
 		this.setBackground(new Background(new BackgroundFill(ColorToSet,CornerRadii.EMPTY,Insets.EMPTY)));
 	}
-	
+
+	/// This function is called when you click on a point
 	class onClickEventHandler implements EventHandler
 	{
 

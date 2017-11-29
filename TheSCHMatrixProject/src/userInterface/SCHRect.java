@@ -19,10 +19,18 @@ public class SCHRect
 		
 		// DEBUG
 		thePoints.add(new SCHPoint(Color.BLACK));
-		thePoints.add(new SCHPoint(Color.BLUE));
-		thePoints.add(new SCHPoint(Color.AQUA));
-		thePoints.add(new SCHPoint(Color.BEIGE));	
+		thePoints.add(new SCHPoint(Color.BLACK));
+		thePoints.add(new SCHPoint(Color.BLACK));
+		thePoints.add(new SCHPoint(Color.BLACK));
+		/*thePoints.add(new SCHPoint(Color.CYAN));
+		thePoints.add(new SCHPoint(Color.ORANGE));
+		thePoints.add(new SCHPoint(Color.RED));*/
 		
+		setUp();
+	}
+
+	private void setUp() 
+	{
 		theRect = new GridPane();
 		theRect.setMaxSize((primaryScreenBounds.Bounds.getWidth()/1920) * 40, (primaryScreenBounds.Bounds.getHeight()/1040) * 40);
 		theRect.getColumnConstraints().add(new ColumnConstraints((primaryScreenBounds.Bounds.getWidth()/1920) *10));
@@ -31,9 +39,9 @@ public class SCHRect
 		theRect.getRowConstraints().add(new RowConstraints((primaryScreenBounds.Bounds.getHeight()/1040) *10));
 		theRect.setConstraints(thePoints.get(0),0,0);
 		theRect.getChildren().add(thePoints.get(0));
-		theRect.setConstraints(thePoints.get(1),1,0);
+		theRect.setConstraints(thePoints.get(1),0,1);
 		theRect.getChildren().add(thePoints.get(1));
-		theRect.setConstraints(thePoints.get(2),0,1);
+		theRect.setConstraints(thePoints.get(2),1,0);
 		theRect.getChildren().add(thePoints.get(2));
 		theRect.setConstraints(thePoints.get(3),1,1);
 		theRect.getChildren().add(thePoints.get(3));

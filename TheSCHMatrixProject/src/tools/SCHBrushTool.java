@@ -2,5 +2,16 @@ package tools;
 
 public class SCHBrushTool extends SCHTool
 {
-	// TODO write methods here
+	boolean bWholeRect;
+	
+	public SCHBrushTool()
+	{
+		super();
+		bWholeRect = false;
+	}
+	
+	public void negateWholeRect()
+	{
+		bWholeRect = !bWholeRect;
+	}
 }

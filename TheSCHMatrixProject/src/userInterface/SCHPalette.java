@@ -1,6 +1,7 @@
 package userInterface;
 
 import userInterface.SCHColor;
+import application.primaryScreenBounds;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -29,23 +30,31 @@ public class SCHPalette
 	public void Init()
 	{
 		palette = new GridPane();
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
-		palette.getColumnConstraints().add((new ColumnConstraints(21)));
+		
+		setUpConstraints();
+
 		palette.setHgap(1);
 		palette.setVgap(1);
-		palette.setPrefSize(200, 100);
+		palette.setPrefSize(primaryScreenBounds.Bounds.getWidth()/1920*200, primaryScreenBounds.Bounds.getHeight()/1040*100);
 		palette.getStylesheets().add(getClass().getResource("schpalette.css").toExternalForm());
 		// DEBUG purposes
 		palette.getStyleClass().add("palettestyle");
 	}
 	
+	/// This function sets up the ColumnConstraints in palette
+	private void setUpConstraints()
+	{
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+		palette.getColumnConstraints().add((new ColumnConstraints(primaryScreenBounds.Bounds.getHeight()/1040*21)));
+	}
+	
 	/// This is the function in which you shall add more colors
-	public void addColors()
+	private void addColors()
 	{
 		// TODO add all colors
 		
