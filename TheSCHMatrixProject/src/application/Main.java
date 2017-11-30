@@ -3,6 +3,9 @@ package application;
 import java.io.File;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -46,29 +49,32 @@ import javafx.scene.shape.Circle;
 public class Main extends Application {
 	
 	// this variable holds the File in which you are working in
-	static File fileOutput;
+	private static File fileOutput;
 	// Helps to pass the current stage to sub-classes
-	static Stage stageToPass;
+	private static Stage stageToPass;
 	
-	static Scene scene;
+	private static Scene scene;
 	// Contains every element of the GUI
-	static GridPane GUI;
+	private static GridPane GUI;
 	// GUI + MenuBar
-	static GridPane root;
+	private static GridPane root;
 	// GUI elements
-	static SCHPalette palette;
-	static SCHBrush brush;
-	static SCHBuilding building;
-	static SCHTool currentTool;
-	static MenuBar menuBar;
-	static Slider timeSlider;
-	static Label timeLabel;
-	static Thread sliderTick;
-	static HBox frameController;
+	private static SCHPalette palette;
+	private static SCHBrush brush;
+	private static SCHBuilding building;
+	private static SCHTool currentTool;
+	private static MenuBar menuBar;
+	public static Slider timeSlider;
+	public static Label timeLabel;
+	public static Label frameCounter;
+	private static HBox frameController;
 	
-	static GridPane test;
+	static GridPane frameControllerPane;
 	
-	static double programTime;
+	public static int programTime;
+	
+	static Boolean bIsPlayed;
+	static Button play_stop;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -79,33 +85,29 @@ public class Main extends Application {
 			
 			currentTool = new SCHBrushTool();
 			programTime = 0;
+			bIsPlayed = false;
 			
 			initGUI();
 			initRoot();
 			initScene(primaryStage);
 			
-			//TODO find it out later when you slept
-			/*Task task = new Task<Void>() {
-			    @Override public Void call() {
-			        while(!isCancelled()) 
-			        {
-			        	if(timeSlider.valueChangingProperty().get())
-			        	{
-			        		programTime = timeSlider.getValue();
-			    			
-			        		//timeLabel.setText(null);
-			        		System.out.println(programTime);
-			        	}
-			        	timeLabel.setText(new String(programTime + "/" + building.getSumOfTime()));
-			        }
-			        return null;
-			    }
-			};
-			sliderTick = new Thread(task);
-			sliderTick.start();*/
+			timeSlider.setMajorTickUnit(100);
+			timeSlider.setShowTickMarks(true);
+			timeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+				public void changed(ObservableValue<? extends Number> ov, Number old_value, Number new_value)
+				{
+					Main.programTime = new_value.intValue();
+					Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+					if((int)(programTime/1000) != building.currentFrame && programTime != building.getSumOfTime())
+					{
+						building.currentFrame = (int)programTime/1000;
+						building.refresh();
+					}
+				}
+			});
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
@@ -211,24 +213,43 @@ public class Main extends Application {
 		GUI.add(timeSlider, 1, 2);
 		
 		// TODO refactor
-		GUI.add(test, 1, 3);
+		GUI.add(frameControllerPane, 1, 3);
 		
 		GUI.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		test.getStyleClass().add("framecontrollersheet");
+		frameControllerPane.getStyleClass().add("framecontrollersheet");
 		
 		//TODO refactor
 		Button addFrame = new Button();
-		addFrame.setBackground(new Background(new BackgroundImage(new Image("file:addframe.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
+		addFrame.setBackground(new Background(new BackgroundImage(new Image("file:add.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(40,40,false,false,true,false))));
+		addFrame.setPrefSize(40, 40);
 		addFrame.setOnMouseClicked(new EventHandler() {
 			@Override
 			public void handle(Event event)
 			{
 				Main.building.addFrame();
+				Main.frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+				Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+				Main.timeSlider.setMax(Main.building.getSumOfTime());
 			}
 		});
-		
+
 		Button deleteFrame = new Button();
-		addFrame.setBackground(new Background(new BackgroundImage(new Image("file:addframe.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
+		deleteFrame.setBackground(new Background(new BackgroundImage(new Image("file:delete.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(40,40,false,false,true,false))));
+		deleteFrame.setPrefSize(40, 40);
+		deleteFrame.setOnMouseClicked(new EventHandler() {
+			@Override
+			public void handle(Event event)
+			{
+				if(Main.programTime >= 1000)
+				{
+				Main.programTime -= 1000;
+				Main.building.deleteFrame();
+				Main.frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+				Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+				Main.timeSlider.setMax(Main.building.getSumOfTime());
+				}
+			}
+		});
 		
 		HBox frameButtonBox = new HBox();
 		frameButtonBox.getChildren().addAll(addFrame,deleteFrame);
@@ -240,8 +261,9 @@ public class Main extends Application {
 		timeLabelWithframeButtonBox.setAlignment(Pos.BOTTOM_LEFT);
 		GUI.add(timeLabelWithframeButtonBox, 2,2);
 		
-		
-		
+		//TODO refactor
+		frameCounter = new Label(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+		GUI.add(frameCounter, 0, 2);
 	}
 	
 	/// This function creates the menuBar
@@ -276,7 +298,7 @@ public class Main extends Application {
 		frameController = new HBox();
 		frameController.setSpacing(30);
 		
-		test = new GridPane();
+		frameControllerPane = new GridPane();
 		
 		Button first = new Button();
 		
@@ -290,7 +312,7 @@ public class Main extends Application {
 		stepLeft.setMinSize(20, 20);
 		stepLeft.setOnMouseClicked(new stepLeftEventHandler());
 		
-		Button play_stop = new Button();
+		play_stop = new Button();
 		play_stop.setBackground(new Background(new BackgroundImage(new Image("file:play.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
 		play_stop.setVisible(true);
 		play_stop.setMinSize(25, 25);
@@ -309,10 +331,10 @@ public class Main extends Application {
 		last.setOnMouseClicked(new lastEventHandler());
 		
 		frameController.getChildren().addAll(first,stepLeft,play_stop,stepRight,last);
-		test.add(frameController,0,0);
+		frameControllerPane.add(frameController,0,0);
 		
 	}
-	
+
 	/// This EventHandler implementer class is called when somebody clicks on menu: File->save
 	class saveFileEventHandler implements EventHandler
 	{
@@ -371,6 +393,7 @@ public class Main extends Application {
 		}
 	}
 	
+	/// This EventHandler implementer class is called when somebody clicks on: Button:stepLeft
 	class stepLeftEventHandler implements EventHandler
 	{
 		@Override
@@ -378,13 +401,22 @@ public class Main extends Application {
 		{
 			if(building.currentFrame > 0)
 			{
-				building.currentFrame -= 1;
-				building.refresh();
+				Main.programTime -= 1000;
+				Main.timeSlider.setValue(Main.programTime);
+				Main.timeLabel.setText(new String(programTime + "/" + building.getSumOfTime()));
+				if((int)(programTime/1000) != building.currentFrame)
+				{
+					building.currentFrame = (int)programTime/1000;
+					building.refresh();
+				}
 				System.out.println(new String(this.getClass().getName() + "clicked"));
+				frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+				
 			}
 		}
 	}
 	
+	/// This EventHandler implementer class is called when somebody clicks on: Button:stepRight
 	class stepRightEventHandler implements EventHandler
 	{
 		@Override
@@ -392,42 +424,129 @@ public class Main extends Application {
 		{
 			if(building.currentFrame < building.frameContainer.size()-1)
 			{
-				building.currentFrame += 1;
-				building.refresh();
+				Main.programTime += 1000;
+				Main.timeSlider.setValue(Main.programTime);
+				Main.timeLabel.setText(new String(programTime + "/" + building.getSumOfTime()));
+				if((int)(programTime/1000) != building.currentFrame)
+				{
+					building.currentFrame = (int)programTime/1000;
+					building.refresh();
+				}
 				System.out.println(new String(this.getClass().getName() + "clicked"));
+				frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
 			}
 		}
 	}
 	
+	/// This EventHandler implementer class is called when somebody clicks on: Button:first
 	class firstEventHandler implements EventHandler
 	{
 		@Override
 		public void handle(Event event)
 		{
-				building.currentFrame = 0;
-				building.refresh();
+				Main.programTime = 0;
+				if((int)(programTime/1000) != building.currentFrame)
+				{
+					building.currentFrame = (int)programTime/1000;
+					building.refresh();
+				}
 				System.out.println(new String(this.getClass().getName() + "clicked"));
+				frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+				Main.timeSlider.setValue(Main.programTime);
+				Main.timeLabel.setText(new String(programTime + "/" + building.getSumOfTime()));
 		}
 	}
 	
+	/// This EventHandler implementer class is called when somebody clicks on: Button:last
 	class lastEventHandler implements EventHandler
 	{
 		@Override
 		public void handle(Event event)
 		{
-				building.currentFrame = building.frameContainer.size()-1;
-				building.refresh();
+				Main.programTime = building.getSumOfTime()-1000;
+				if((int)(programTime/1000) != building.currentFrame)
+				{
+					building.currentFrame = (int)programTime/1000;
+					building.refresh();
+				}
 				System.out.println(new String(this.getClass().getName() + "clicked"));
+				frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+				Main.timeSlider.setValue(Main.programTime);
+				Main.timeLabel.setText(new String(programTime + "/" + building.getSumOfTime()));
 		}
 	}
 	
+	/// This EventHandler implementer class is called when somebody clicks on: Button:play_stop
+	// TODO implement this one
 	class play_stopEventHandler implements EventHandler
 	{
 		@Override
 		public void handle(Event event)
 		{
-				// TODO implement later
+			if(bIsPlayed == false)
+			{
+				bIsPlayed = true;
+
+				Task playin = new Task<Integer>() 
+				{
+					@Override
+					protected Integer call() throws Exception
+					{
+						do
+						{	
+							Main.programTime += 1;
+							updateValue(Main.programTime);
+							updateMessage(new String(Main.programTime + "/" + Main.building.getSumOfTime()));
+							if(Main.programTime == Main.building.getSumOfTime())
+							{
+								Main.bIsPlayed = false;
+							}
+							if((int)(programTime/1000) != building.currentFrame && ((int)programTime != building.getSumOfTime()))
+							{
+								Platform.runLater(new Runnable() {
+									@Override
+									public void run()
+									{
+										building.currentFrame = (int)(programTime/1000);
+										
+										building.refresh();
+									}
+								});
+								// TODO try implement this later
+							}
+							try {
+							Thread.sleep(1);
+							}catch(Exception e)
+							{
+								//e.printStackTrace();
+								// TODO handle this one
+							}
+						}while(Main.bIsPlayed == true);
+						Main.play_stop.setBackground(new Background(new BackgroundImage(new Image("file:play.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
+						return null;
+					}
+				};
+				Main.timeSlider.valueProperty().bind(playin.valueProperty());
+				Main.timeLabel.textProperty().bind(playin.messageProperty());
+				
+				playin.setOnSucceeded(e -> {
+					Main.timeSlider.valueProperty().unbind();
+					Main.timeLabel.textProperty().unbind();
+					Main.timeLabel.setText(new String(Main.timeSlider.getValue() + "/" + Main.building.getSumOfTime()));
+					Main.building.currentFrame = 0;
+				});
+				
+				Thread myThread = new Thread(playin);
+				myThread.setDaemon(true);
+							
+				myThread.start();
+				
+				play_stop.setBackground(new Background(new BackgroundImage(new Image("file:stop.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
+				
+				myThread.destroy();
+			}
 			System.out.println(new String(this.getClass().getName() + "clicked"));
 		}
 	}
+
 }

@@ -96,7 +96,7 @@ public class SCHFrame
 	}
 	
 	/// This function constructs the passed frame in the right way.
-	static public void toFrame(String[] splitString,SCHFrame frameToAdd) throws Exception
+	static public SCHFrame toFrame(String[] splitString,SCHFrame frameToAdd) throws Exception
 	{
 		for(int index = 1; index < 27; index++)
 		{
@@ -133,5 +133,6 @@ public class SCHFrame
 			}
 			
 		}
+		return frameToAdd;
 	}
 }

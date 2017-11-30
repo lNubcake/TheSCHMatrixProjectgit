@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
+import application.Main;
 import application.primaryScreenBounds;
 
 public class SCHBuilding
@@ -35,6 +36,7 @@ public class SCHBuilding
 	
 	public SCHBuilding()
 	{
+		
 		theBuilding = new BorderPane();
 		frameContainer = new ArrayList<SCHFrame>(1);
 		frameContainer.add(new SCHFrame());
@@ -78,7 +80,7 @@ public class SCHBuilding
 		String currentLine;
 		while(scanner.hasNext())
 		{
-			SCHFrame frameToAdd = new SCHFrame();
+			
 			currentLine = scanner.next();
 			if(currentLine.equals("frame({"))
 			{
@@ -90,20 +92,22 @@ public class SCHBuilding
 				}
 				
 				String[] splitString = rst.split("\n");
-				
-				SCHFrame.toFrame(splitString,frameToAdd);
 			
-			frameContainer.add(frameToAdd);	
+			frameContainer.add(SCHFrame.toFrame(splitString, new SCHFrame()));
 			}
+			rst = "";
 		}
+		Main.frameCounter.setText(new String(currentFrame+1 + "/" + frameContainer.size()));
+		Main.timeSlider.setMax(frameContainer.size()*1000);
 		scanner.close();
 		
-		theBuilding.setCenter(frameContainer.get(0).theFrame);
+		refresh();
+		
 		currentFrame = 0;
 			
 	}
 	
-	public double getSumOfTime()
+	public int getSumOfTime()
 	{
 		int res = 0;
 		for(SCHFrame f : frameContainer)
@@ -115,6 +119,7 @@ public class SCHBuilding
 	
 	public void refresh()
 	{
+		Main.frameCounter.setText(new String(currentFrame+1 + "/" + frameContainer.size()));
 		theBuilding.setCenter(null);
 		theBuilding.setCenter(frameContainer.get(currentFrame).theFrame);
 	}
@@ -123,4 +128,24 @@ public class SCHBuilding
 	{
 		frameContainer.add(new SCHFrame());
 	}
+	
+	public void deleteFrame()
+	{
+		if(frameContainer.size() == 1)
+		{
+			frameContainer.clear();
+			frameContainer.add(new SCHFrame());
+		}
+		else
+		{
+			if(frameContainer.size()-1 == currentFrame)
+			{
+				currentFrame -= 1;
+			}
+			frameContainer.remove(frameContainer.get(currentFrame));
+			
+			refresh();
+		}
+	}
+	
 }
