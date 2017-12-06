@@ -2,6 +2,8 @@ package application;
 	
 import java.io.File;
 
+import org.junit.Test;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -10,18 +12,16 @@ import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.geometry.VPos;
 import javafx.stage.FileChooser;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.junit.Assert;
+import org.junit.Before;
+
 import toolbar.SCHBrush;
 import tools.SCHBrushTool;
 import tools.SCHTool;
 import userInterface.SCHBuilding;
-import userInterface.SCHColor;
 import userInterface.SCHPalette;
-import userInterface.SCHRect;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -36,15 +36,10 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 public class Main extends Application {
 	
@@ -69,12 +64,12 @@ public class Main extends Application {
 	public static Label frameCounter;
 	private static HBox frameController;
 	
-	static GridPane frameControllerPane;
+	private static GridPane frameControllerPane;
 	
 	public static int programTime;
 	
-	static Boolean bIsPlayed;
-	static Button play_stop;
+	private static Boolean bIsPlayed;
+	private static Button play_stop;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -82,7 +77,6 @@ public class Main extends Application {
 		stageToPass = primaryStage;
 		
 		try {
-			
 			currentTool = new SCHBrushTool();
 			programTime = 0;
 			bIsPlayed = false;
@@ -97,7 +91,13 @@ public class Main extends Application {
 				public void changed(ObservableValue<? extends Number> ov, Number old_value, Number new_value)
 				{
 					Main.programTime = new_value.intValue();
-					Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run()
+						{
+							Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+						}
+					});
 					if((int)(programTime/1000) != building.currentFrame && programTime != building.getSumOfTime())
 					{
 						building.currentFrame = (int)programTime/1000;
@@ -107,7 +107,7 @@ public class Main extends Application {
 			});
 			
 		} catch(Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
@@ -170,11 +170,11 @@ public class Main extends Application {
 		GUI.setVgap(primaryScreenBounds.Bounds.getMaxY()/1040*10);
 		
 		//toolbar
-		GUI.getColumnConstraints().add(new ColumnConstraints(primaryScreenBounds.Bounds.getWidth()/1920*30));
-		GUI.getRowConstraints().add(new RowConstraints(primaryScreenBounds.Bounds.getWidth()/1040*15));
+		GUI.getColumnConstraints().add(new ColumnConstraints(35));
+		GUI.getRowConstraints().add(new RowConstraints(30));
 		//SCHbuilding
 		GUI.getColumnConstraints().add(new ColumnConstraints(primaryScreenBounds.Bounds.getWidth()/1920*955));
-		GUI.getRowConstraints().add(new RowConstraints(primaryScreenBounds.Bounds.getHeight()/1040*845));
+		GUI.getRowConstraints().add(new RowConstraints(primaryScreenBounds.Bounds.getHeight()/1040*815));
 		//palette
 		GUI.getColumnConstraints().add(new ColumnConstraints(primaryScreenBounds.Bounds.getWidth()/1920*300));
 		//TimeSlider
@@ -211,43 +211,32 @@ public class Main extends Application {
 		GUI.add(building.theBuilding, 1, 1);
 		GUI.add(palette.palette, 2, 1);
 		GUI.add(timeSlider, 1, 2);
-		
-		// TODO refactor
 		GUI.add(frameControllerPane, 1, 3);
 		
 		GUI.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		frameControllerPane.getStyleClass().add("framecontrollersheet");
 		
-		//TODO refactor
 		Button addFrame = new Button();
 		addFrame.setBackground(new Background(new BackgroundImage(new Image("file:add.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(40,40,false,false,true,false))));
 		addFrame.setPrefSize(40, 40);
-		addFrame.setOnMouseClicked(new EventHandler() {
-			@Override
-			public void handle(Event event)
-			{
-				Main.building.addFrame();
-				Main.frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
-				Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
-				Main.timeSlider.setMax(Main.building.getSumOfTime());
-			}
+		addFrame.setOnMouseClicked(event -> {
+			Main.building.addFrame();
+			Main.frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+			Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+			Main.timeSlider.setMax(Main.building.getSumOfTime());
 		});
 
 		Button deleteFrame = new Button();
 		deleteFrame.setBackground(new Background(new BackgroundImage(new Image("file:delete.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(40,40,false,false,true,false))));
 		deleteFrame.setPrefSize(40, 40);
-		deleteFrame.setOnMouseClicked(new EventHandler() {
-			@Override
-			public void handle(Event event)
+		deleteFrame.setOnMouseClicked(event -> {
+			if(Main.programTime >= 1000)
 			{
-				if(Main.programTime >= 1000)
-				{
-				Main.programTime -= 1000;
-				Main.building.deleteFrame();
-				Main.frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
-				Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
-				Main.timeSlider.setMax(Main.building.getSumOfTime());
-				}
+			Main.programTime -= 1000;
+			Main.building.deleteFrame();
+			Main.frameCounter.setText(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
+			Main.timeLabel.setText(new String(Main.programTime +"/"+ Main.building.getSumOfTime()));
+			Main.timeSlider.setMax(Main.building.getSumOfTime());
 			}
 		});
 		
@@ -261,17 +250,16 @@ public class Main extends Application {
 		timeLabelWithframeButtonBox.setAlignment(Pos.BOTTOM_LEFT);
 		GUI.add(timeLabelWithframeButtonBox, 2,2);
 		
-		//TODO refactor
 		frameCounter = new Label(new String("  " + (building.currentFrame+1) + "/" + building.frameContainer.size()));
 		GUI.add(frameCounter, 0, 2);
 	}
 	
 	/// This function creates the menuBar
+	@SuppressWarnings("unchecked")
 	private void createMenu()
 	{
 		menuBar = new MenuBar();
 		
-		// TODO finish this one
 		Menu mFile = new Menu("File");
 		
 		MenuItem openFile = new MenuItem("Open");
@@ -293,6 +281,7 @@ public class Main extends Application {
 	}
 	
 	/// This function creates the button bar that controls the frames
+	@SuppressWarnings("unchecked")
 	public void initFrameController()
 	{
 		frameController = new HBox();
@@ -321,13 +310,13 @@ public class Main extends Application {
 		Button stepRight = new Button();
 		stepRight.setBackground(new Background(new BackgroundImage(new Image("file:arrow_right.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
 		stepRight.setVisible(true);
-		stepRight.setMinSize(15, 15);
+		stepRight.setMinSize(20, 20);
 		stepRight.setOnMouseClicked(new stepRightEventHandler());
 		
 		Button last = new Button();
 		last.setBackground(new Background(new BackgroundImage(new Image("file:last.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
 		last.setVisible(true);
-		last.setMinSize(15, 15);
+		last.setMinSize(20, 20);
 		last.setOnMouseClicked(new lastEventHandler());
 		
 		frameController.getChildren().addAll(first,stepLeft,play_stop,stepRight,last);
@@ -336,6 +325,7 @@ public class Main extends Application {
 	}
 
 	/// This EventHandler implementer class is called when somebody clicks on menu: File->save
+	@SuppressWarnings("rawtypes")
 	class saveFileEventHandler implements EventHandler
 	{
 		final FileChooser fileChooser = new FileChooser();
@@ -367,6 +357,7 @@ public class Main extends Application {
 	}
 	
 	/// This EventHandler implementer class is called when somebody clicks on menu: File->open
+	@SuppressWarnings("rawtypes")
 	class openFileEventHandler implements EventHandler
 	{
 		final FileChooser fileChooser = new FileChooser();
@@ -394,6 +385,7 @@ public class Main extends Application {
 	}
 	
 	/// This EventHandler implementer class is called when somebody clicks on: Button:stepLeft
+	@SuppressWarnings("rawtypes")
 	class stepLeftEventHandler implements EventHandler
 	{
 		@Override
@@ -417,6 +409,7 @@ public class Main extends Application {
 	}
 	
 	/// This EventHandler implementer class is called when somebody clicks on: Button:stepRight
+	@SuppressWarnings("rawtypes")
 	class stepRightEventHandler implements EventHandler
 	{
 		@Override
@@ -439,6 +432,7 @@ public class Main extends Application {
 	}
 	
 	/// This EventHandler implementer class is called when somebody clicks on: Button:first
+	@SuppressWarnings("rawtypes")
 	class firstEventHandler implements EventHandler
 	{
 		@Override
@@ -458,6 +452,7 @@ public class Main extends Application {
 	}
 	
 	/// This EventHandler implementer class is called when somebody clicks on: Button:last
+	@SuppressWarnings("rawtypes")
 	class lastEventHandler implements EventHandler
 	{
 		@Override
@@ -478,8 +473,10 @@ public class Main extends Application {
 	
 	/// This EventHandler implementer class is called when somebody clicks on: Button:play_stop
 	// TODO implement this one
+	@SuppressWarnings("rawtypes")
 	class play_stopEventHandler implements EventHandler
 	{
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handle(Event event)
 		{
@@ -512,14 +509,12 @@ public class Main extends Application {
 										building.refresh();
 									}
 								});
-								// TODO try implement this later
 							}
 							try {
 							Thread.sleep(1);
 							}catch(Exception e)
 							{
-								//e.printStackTrace();
-								// TODO handle this one
+								throw e;
 							}
 						}while(Main.bIsPlayed == true);
 						Main.play_stop.setBackground(new Background(new BackgroundImage(new Image("file:play.jpg"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,new BackgroundSize(25,25,false,false,true,false))));
@@ -548,5 +543,4 @@ public class Main extends Application {
 			System.out.println(new String(this.getClass().getName() + "clicked"));
 		}
 	}
-
 }

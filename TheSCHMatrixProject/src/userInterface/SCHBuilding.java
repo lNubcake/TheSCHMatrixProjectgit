@@ -1,29 +1,20 @@
 package userInterface;
 
-import javafx.geometry.Insets;
+import javafx.application.Platform;
 import javafx.geometry.Side;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 
-import java.awt.BorderLayout;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.regex.MatchResult;
 
 import application.Main;
 import application.primaryScreenBounds;
@@ -41,7 +32,7 @@ public class SCHBuilding
 		frameContainer = new ArrayList<SCHFrame>(1);
 		frameContainer.add(new SCHFrame());
 		
-		theBuilding.setBackground(new Background(new BackgroundImage(new Image("file:Building.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,new BackgroundPosition(Side.LEFT,primaryScreenBounds.Bounds.getMaxX()/1920*125,false,Side.TOP, 10, false),new BackgroundSize(700,845,false,false,false,false))));
+		theBuilding.setBackground(new Background(new BackgroundImage(new Image("file:Building.png"),BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,new BackgroundPosition(Side.LEFT,primaryScreenBounds.Bounds.getMaxX()/1920*125,false,Side.TOP, 10, false),new BackgroundSize(primaryScreenBounds.Bounds.getWidth()/1920*694,primaryScreenBounds.Bounds.getHeight()/1040*810,false,false,false,false))));
 		theBuilding.getStylesheets().add(getClass().getResource("schpalette.css").toExternalForm());
 		
 		theBuilding.setCenter(frameContainer.get(0).theFrame);
@@ -119,7 +110,13 @@ public class SCHBuilding
 	
 	public void refresh()
 	{
-		Main.frameCounter.setText(new String(currentFrame+1 + "/" + frameContainer.size()));
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run()
+			{
+				Main.frameCounter.setText(new String(currentFrame+1 + "/" + frameContainer.size()));
+			}
+		});
 		theBuilding.setCenter(null);
 		theBuilding.setCenter(frameContainer.get(currentFrame).theFrame);
 	}

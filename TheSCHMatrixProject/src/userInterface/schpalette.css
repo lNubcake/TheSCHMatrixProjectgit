@@ -3,11 +3,11 @@
 /* This one goes for the palette */
 .hbox
 {
-	-fx-padding: 1;
+	-fx-padding: 0;
 	-fx-spacing: 1;
 	-fx-alignment:top-left;
 	-fx-background-image:url("file:Colorbackground.png");
-	-fx-background-repeat:space space;
+	-fx-background-repeat:repeat repeat;
 }
 /* palette debug */
 .palettestyle

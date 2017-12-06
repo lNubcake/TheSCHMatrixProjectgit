@@ -1,0 +1,17 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.elementsbordered
+{
+	-fx-border-color:black;
+	-fx-border-radius:1px;
+}
+
+.debuglines
+{
+	-fx-grid-lines-visible:true;
+}
+
+.framecontrollersheet
+{
+	-fx-alignment: center;
+}

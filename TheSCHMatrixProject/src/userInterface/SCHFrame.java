@@ -15,15 +15,6 @@ public class SCHFrame
 	public int timeIn_ms;
 	public String name;
 	
-	/// Copying a frame;
-	public SCHFrame(SCHFrame FrameToSet) 
-	{
-		theFrame = FrameToSet.theFrame;
-		Container = FrameToSet.Container;
-		timeIn_ms = FrameToSet.timeIn_ms;
-		name = FrameToSet.name;
-	}
-	
 	/// constructing a frame
 	public SCHFrame()
 	{
@@ -55,10 +46,10 @@ public class SCHFrame
 		theFrame.getRowConstraints().add(new RowConstraints((primaryScreenBounds.Bounds.getHeight()/1040) * 195));
 		while(i < 16)
 		{
-			theFrame.getColumnConstraints().add(new ColumnConstraints((primaryScreenBounds.Bounds.getWidth()/1920) * 33));
+			theFrame.getColumnConstraints().add(new ColumnConstraints((primaryScreenBounds.Bounds.getWidth()/1920) * 32));
 			if(i < 12)
 			{
-				theFrame.getRowConstraints().add(new RowConstraints((primaryScreenBounds.Bounds.getHeight()/1040) * 51));
+				theFrame.getRowConstraints().add(new RowConstraints((primaryScreenBounds.Bounds.getHeight()/1040) * 48));
 			}
 			i++;
 		}
